@@ -74,3 +74,37 @@ cc_unmask_user_service (const char *service)
 
   return success;
 }
+
+gboolean
+cc_reload_systemd (GBusType     bus_type,
+                   GError     **error)
+{
+  g_autoptr(GDBusConnection) connection = NULL;
+  g_autoptr(GVariant) reload_result = NULL;
+
+  connection = g_bus_get_sync (bus_type, NULL, error);
+  if (!connection)
+    {
+      g_prefix_error_literal (error, "Failed connecting to D-Bus system bus: ");
+      return FALSE;
+    }
+
+  reload_result = g_dbus_connection_call_sync (connection,
+                                             "org.freedesktop.systemd1",
+                                             "/org/freedesktop/systemd1",
+                                             "org.freedesktop.systemd1.Manager",
+                                             "Reload",
+                                             NULL,
+                                             NULL,
+                                             G_DBUS_CALL_FLAGS_NONE,
+                                             -1,
+                                             NULL,
+                                             error);
+  if (!reload_result)
+    {
+      g_prefix_error_literal (error, "Failed to reload systemd: ");
+      return FALSE;
+    }
+
+  return TRUE;
+}

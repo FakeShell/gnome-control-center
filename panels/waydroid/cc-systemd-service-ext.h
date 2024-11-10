@@ -26,3 +26,6 @@
 gboolean cc_mask_user_service (const char  *service);
 
 gboolean cc_unmask_user_service (const char  *service);
+
+gboolean cc_reload_systemd (GBusType     bus_type,
+                            GError     **error);

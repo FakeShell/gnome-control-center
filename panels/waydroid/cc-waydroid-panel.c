@@ -797,9 +797,11 @@ cc_waydroid_panel_enable_notification (CcWaydroidPanel *self, gboolean state)
   if (!state) {
     cc_stop_service (WAYDROID_NOTIFICATION_CLIENT_SERVICE, G_BUS_TYPE_SESSION, &error);
     cc_mask_user_service (WAYDROID_NOTIFICATION_CLIENT_SERVICE);
+    cc_reload_systemd (G_BUS_TYPE_SESSION, &error);
   } else {
-    cc_start_service (WAYDROID_NOTIFICATION_CLIENT_SERVICE, G_BUS_TYPE_SESSION, &error);
     cc_unmask_user_service (WAYDROID_NOTIFICATION_CLIENT_SERVICE);
+    cc_reload_systemd (G_BUS_TYPE_SESSION, &error);
+    cc_start_service (WAYDROID_NOTIFICATION_CLIENT_SERVICE, G_BUS_TYPE_SESSION, &error);
   }
 
   if (error != NULL) {
