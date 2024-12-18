@@ -21,7 +21,6 @@ read_batman_config ()
     } else {
         batman_config.offline = g_key_file_get_boolean (keyfile, "Settings", "OFFLINE", NULL);
         batman_config.powersave = g_key_file_get_boolean (keyfile, "Settings", "POWERSAVE", NULL);
-        batman_config.max_cpu_usage = g_key_file_get_integer (keyfile, "Settings", "MAX_CPU_USAGE", NULL);
         batman_config.chargesave = g_key_file_get_boolean (keyfile, "Settings", "CHARGESAVE", NULL);
         batman_config.bussave = g_key_file_get_boolean (keyfile, "Settings", "BUSSAVE", NULL);
         batman_config.gpusave = g_key_file_get_boolean (keyfile, "Settings", "GPUSAVE", NULL);
@@ -206,57 +205,4 @@ waydroidsave_switch_state_set (GtkSwitch *switch_widget, gboolean state, gpointe
         return TRUE;
     else
         return FALSE;
-}
-
-int
-max_cpu_entry_apply (AdwEntryRow* sender, gpointer)
-{
-    int max_cpu_usage = g_ascii_strtoull(
-        gtk_editable_get_text (GTK_EDITABLE (sender)),
-        NULL, 10);
-
-    if (max_cpu_usage < 0 || max_cpu_usage > 100) {
-        fprintf (stderr, "CPU usage must be between 0 and 100\n");
-        max_cpu_usage = 0;  // Set default value
-        gtk_editable_set_text (GTK_EDITABLE (sender), "0");
-    }
-
-    FILE *file = fopen (BATMAN_CONFIG_FILE, "r");
-    if (file == NULL) {
-        perror("Unable to open config file");
-        return -1;
-    }
-
-    char line[256];
-    char config_data[1024] = "";  // Assuming config file is less than 1024 characters
-    bool found = false;
-
-    while (fgets (line, sizeof (line), file)) {
-        if (strncmp (line, "MAX_CPU_USAGE=", 14) == 0) {
-            sprintf (line, "MAX_CPU_USAGE=%d\n", max_cpu_usage);
-            found = true;
-        }
-        strcat(config_data, line);
-    }
-
-    // If MAX_CPU_USAGE is not found in the file, add it.
-    if (!found) {
-        sprintf (line, "MAX_CPU_USAGE=%d\n", max_cpu_usage);
-        strcat (config_data, line);
-    }
-
-    fclose(file);
-
-    // Now write the modified config data back to the file
-    file = fopen (BATMAN_CONFIG_FILE, "w");
-    if (file == NULL) {
-        perror ("Unable to open config file");
-        return -1;
-    }
-
-    fprintf (file, "%s", config_data);
-
-    fclose (file);
-
-    return 0;
 }

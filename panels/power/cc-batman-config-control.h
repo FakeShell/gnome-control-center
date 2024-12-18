@@ -13,7 +13,6 @@
 typedef struct {
     gboolean offline;
     gboolean powersave;
-    int max_cpu_usage;
     gboolean chargesave;
     gboolean bussave;
     gboolean gpusave;
@@ -60,6 +59,3 @@ wifisave_switch_state_set (GtkSwitch* sender, gboolean state, gpointer data);
 
 gboolean
 waydroidsave_switch_state_set (GtkSwitch* sender, gboolean state, gpointer data);
-
-int
-max_cpu_entry_apply (AdwEntryRow* sender, gpointer);

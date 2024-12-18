@@ -44,7 +44,6 @@ struct _CcPowerPanel
   AdwSwitchRow      *als_row;
   AdwDialog         *automatic_suspend_dialog;
   CcListRow         *automatic_suspend_row;
-  AdwEntryRow       *batman_max_cpu_row;
   GtkSwitch         *batman_waydroidsave_switch;
   GtkSwitch         *batman_wifisave_switch;
   GtkSwitch         *batman_hybrissave_switch;
@@ -1252,7 +1251,6 @@ cc_power_panel_class_init (CcPowerPanelClass *klass)
   gtk_widget_class_bind_template_child (widget_class, CcPowerPanel, als_row);
   gtk_widget_class_bind_template_child (widget_class, CcPowerPanel, automatic_suspend_dialog);
   gtk_widget_class_bind_template_child (widget_class, CcPowerPanel, automatic_suspend_row);
-  gtk_widget_class_bind_template_child (widget_class, CcPowerPanel, batman_max_cpu_row);
   gtk_widget_class_bind_template_child (widget_class, CcPowerPanel, batman_waydroidsave_switch);
   gtk_widget_class_bind_template_child (widget_class, CcPowerPanel, batman_wifisave_switch);
   gtk_widget_class_bind_template_child (widget_class, CcPowerPanel, batman_hybrissave_switch);
@@ -1350,13 +1348,6 @@ cc_power_panel_init (CcPowerPanel *self)
   g_signal_connect (self->batman_service_enabled_switch, "state-set", G_CALLBACK (batman_service_enabled_switch_state_set), NULL);
 
   read_batman_config ();
-
-  GString *max_cpu_str = g_string_new (NULL);
-  g_string_printf (max_cpu_str, "%d", batman_config.max_cpu_usage);
-  gtk_editable_set_text (GTK_EDITABLE (self->batman_max_cpu_row), max_cpu_str->str);
-  g_string_free (max_cpu_str, TRUE);
-
-  g_signal_connect (self->batman_max_cpu_row, "apply", G_CALLBACK (max_cpu_entry_apply), NULL);
 
   gtk_switch_set_state (GTK_SWITCH (self->batman_waydroidsave_switch), batman_config.waydroidsave);
   gtk_switch_set_active (GTK_SWITCH (self->batman_waydroidsave_switch), batman_config.waydroidsave);
